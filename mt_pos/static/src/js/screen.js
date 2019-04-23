@@ -14,7 +14,7 @@ var LockButton = screens.ActionButtonWidget.extend({
     
 	
 	this.gui.show_popup('hide-cancel',{
-	    'title': _t('Password? App mt_pos'),
+	    'title': _t('Password?'),
 	    'confirm': function(val) {
 		var result = self.validate_pwd(val);
 		console.log(this.pos.config.disc_pwd);
@@ -53,10 +53,11 @@ screens.NumpadWidget.include({
 	var self = this;
 	this._super();
 	var mode = this.state.get('mode');
-        if (mode === 'discount'){
+
+        if (mode === 'discount' || mode === 'price'){
             //function call in pos_pin/static/src/js/pos.js line 51
             self.gui.sudo_custom({
-                'title': _t('Necesitas la Aprobación de un supervisor'),
+                'title': _t('Necesitas la Aprobación de un Supervisor'),
                 'special_group': this.pos.config.negative_order_group_id[0],
                 'action': mode // action click , captura el stado o mode del boton
                 })

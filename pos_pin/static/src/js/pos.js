@@ -8,6 +8,7 @@ odoo.define('pos_pin.pos', function (require) {
     var Model = require('web.DataModel');
     var formats = require('web.formats');
     var session = require('web.session');
+
     var _t = core._t;
 
     // Llamada a la clase  donde se encuentra funciones del teclado Point Sale
@@ -29,14 +30,14 @@ odoo.define('pos_pin.pos', function (require) {
 
             if (password) {
                 this.show_popup('password',{
-                    'title': _t('Pruebas Password ..?'),
+                    'title': _t('Password?'),
                     'cancel':  function(){
                         reset_boton()
                      },
                     confirm: function(pw) {
                         if (pw !== password) {
-                            self.show_popup('error',_t('Pruebas Incorrect... Password'));
-                            reset_boton()
+                            self.show_popup('error',_t('Incorrect Password'));
+                            reset_boton();
                             ret.reject();
                         } else {
                             ret.resolve();
@@ -44,7 +45,7 @@ odoo.define('pos_pin.pos', function (require) {
                     },
                 });
             } else {
-                reset_boton()
+                reset_boton();
                 ret.resolve();
             }
             return ret;
@@ -57,7 +58,7 @@ odoo.define('pos_pin.pos', function (require) {
             } else {
 
             //llamada a la funcion select_user_custom; pos_pin/static/src/js/pos.js line 80
-                if(options.action == 'discount'){
+                if(options.action == 'discount' || options.action == 'price'){
                     return this.select_user_discount({
                         'security': true,
                         'current_user': this.pos.get_cashier(),
@@ -83,7 +84,7 @@ odoo.define('pos_pin.pos', function (require) {
 
             var self = this;
             var def  = new $.Deferred();
-    
+
             var list = [];
             for (var i = 0; i < this.pos.users.length; i++) {
                 var user = this.pos.users[i];
@@ -94,14 +95,14 @@ odoo.define('pos_pin.pos', function (require) {
                     });
                 }
             }
-    
+
             this.show_popup('selection',{
                 'title': options.title || _t('Select User'),
                 'list': list,
                 'confirm': function(user){ def.resolve(user); },
                 'cancel':  function(){ def.reject(); }
             });
-    
+
             return def.then(function(user){
                 if (options.security && user !== options.current_user && user.pos_security_pin) {
                     return self.ask_password(user.pos_security_pin).then(function(){
